@@ -11,16 +11,34 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import mlflow
 import mlflow.sklearn
 
-# Initialize DagsHub MLflow (use env vars for auth)
-import dagshub
-dagshub.init(repo_owner=os.getenv("DAGSHUB_USERNAME", "anwarrohmadi2006"), 
-             repo_name="MLOps-Dicoding-Submission", 
-             mlflow=True)
+# DagsHub Authentication for CI/CD
+# We use environment variables to prevent interactive login prompts
+if os.getenv("DAGSHUB_USER_TOKEN"):
+    import dagshub
+    dagshub.init(
+        repo_owner=os.getenv("DAGSHUB_USERNAME", "anwarrohmadi2006"),
+        repo_name="MLOps-Dicoding-Submission",
+        mlflow=True
+    )
+    print("✅ DagsHub MLflow initialized automatically via token.")
+else:
+    # Fallback for local or if dagshub-init is not used
+    mlflow_uri = os.getenv("MLFLOW_TRACKING_URI")
+    if mlflow_uri:
+        mlflow.set_tracking_uri(mlflow_uri)
+        print(f"✅ MLflow tracking URI set to: {mlflow_uri}")
 
 DATA_DIR = "house_prices_preprocessing"
 MODEL_OUTPUT_DIR = "model_output"
 
 def load_data():
+    # Check if files exist
+    files = ["X_train.csv", "X_val.csv", "y_train.csv", "y_val.csv"]
+    for f in files:
+        path = os.path.join(DATA_DIR, f)
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"❌ Missing data file: {path}")
+            
     X_train = pd.read_csv(f"{DATA_DIR}/X_train.csv")
     X_val = pd.read_csv(f"{DATA_DIR}/X_val.csv")
     y_train = pd.read_csv(f"{DATA_DIR}/y_train.csv").values.ravel()
@@ -34,8 +52,10 @@ def main():
     parser.add_argument("--learning_rate", type=float, default=0.1)
     args = parser.parse_args()
     
+    print("📂 Loading data...")
     X_train, X_val, y_train, y_val = load_data()
     
+    print("🚀 Starting training...")
     with mlflow.start_run():
         mlflow.log_param("max_iter", args.max_iter)
         mlflow.log_param("max_depth", args.max_depth)
@@ -62,8 +82,8 @@ def main():
         model_path = os.path.join(MODEL_OUTPUT_DIR, "model")
         mlflow.sklearn.save_model(model, model_path)
         
-        print(f"RMSE: {rmse:.4f}, MAE: {mae:.4f}, R2: {r2:.4f}")
-        print(f"Model saved to {model_path}")
+        print(f"📊 Results - RMSE: {rmse:.4f}, MAE: {mae:.4f}, R2: {r2:.4f}")
+        print(f"💾 Model saved to {model_path}")
 
 if __name__ == "__main__":
     main()
