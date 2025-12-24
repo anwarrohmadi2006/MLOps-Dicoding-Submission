@@ -1,45 +1,14 @@
-# Eksperimen_SML_Anwar-Rohmadi
+# K1 - Eksperimen Machine Learning
+**Author: Anwar-Rohmadi**
 
-## 📋 Deskripsi
-Repository untuk **K1 - Eksperimentasi Data Science** pada submission Dicoding MLOps. Berisi pipeline preprocessing data untuk dataset House Prices.
+Folder ini berisi seluruh tahapan eksperimen data awal dan pengembangan pipeline preprocessing yang dapat dijalankan kembali secara otomatis.
 
-## 📁 Struktur Folder
-```
-Eksperimen_SML_Anwar-Rohmadi/
-├── .github/
-│   └── workflows/
-│       └── preprocess.yml       # GitHub Actions workflow
-├── preprocessing/
-│   ├── Eksperimen_Anwar-Rohmadi.ipynb  # EDA Notebook
-│   ├── automate_Anwar-Rohmadi.py       # Automated preprocessing
-│   └── run_notebook.py                  # Executable script
-├── house_prices_raw/            # Raw dataset (train.csv, test.csv)
-├── house_prices_preprocessing/  # Preprocessed output
-├── config.py                    # Configuration
-└── requirements.txt             # Dependencies
-```
+## Isi Folder
+- `preprocessing/Eksperimen_Anwar-Rohmadi.ipynb`: Notebook EDA & Preprocessing lengkap.
+- `preprocessing/automate_Anwar-Rohmadi.py`: Script otomatisasi preprocessing yang digunakan dalam pipeline CI/CD.
+- `house_prices_raw/`: Berisi dataset mentah (train.csv).
+- `house_prices_preprocessing/`: Berisi hasil data yang telah dibersihkan (X_train, y_train, dll).
+- `screenshots/`: Bukti visual dari analisis data.
 
-## 🚀 Cara Menjalankan
-
-### Local
-```bash
-pip install -r requirements.txt
-cd preprocessing
-python automate_Anwar-Rohmadi.py
-```
-
-### GitHub Actions
-Push ke repository untuk trigger workflow otomatis.
-
-## 📊 Fitur Preprocessing
-- Missing value handling (numeric: median, categorical: mode)
-- Feature engineering (TotalSF, HouseAge, TotalBathrooms, dll)
-- Outlier detection & removal
-- Label encoding untuk categorical
-- Train/validation split (80/20)
-
-## 👤 Author
-**Anwar Rohmadi**
-
-## 🔗 Links
-- [GitHub Repository](https://github.com/anwarrohmadi2006/Eksperimen_SML_Anwar-Rohmadi)
+## Kriteria Advance
+**Preprocessing Otomatis:** Telah diimplementasikan melalui script Python yang modular dan terintegrasi dengan GitHub Actions.

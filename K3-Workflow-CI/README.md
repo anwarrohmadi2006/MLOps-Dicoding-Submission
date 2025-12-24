@@ -1,58 +1,17 @@
-# Workflow-CI
+# K3 - Workflow CI/CD
+**Author: Anwar-Rohmadi**
 
-## 📋 Deskripsi
-Repository untuk **K3 - Continuous Integration** pada submission Dicoding MLOps. Berisi CI/CD pipeline untuk build dan push Docker image ke DockerHub.
+Folder ini berisi file-file yang diperlukan untuk menjalankan alur kerja integrasi dan pengiriman mandiri (CI/CD).
 
-## 📁 Struktur Folder
-```
-Workflow-CI/
-├── .github/
-│   └── workflows/
-│       └── ci.yml            # GitHub Actions CI workflow
-├── MLProject/
-│   ├── Dockerfile            # Docker image definition
-│   ├── modelling.py          # Model training script
-│   ├── requirements.txt      # Dependencies
-│   └── DockerHub.txt         # Link ke DockerHub
-├── DockerHub.txt             # Link ke DockerHub image
-└── README.md                 # Dokumentasi
-```
+## Isi Folder
+- `MLProject/MLproject`: File konfigurasi standard MLflow untuk reproduksibilitas.
+- `MLProject/conda.yaml`: Definisi environment dependensi.
+- `.github/workflows/mlops-pipeline.yml`: (Berada di root repositori) Definisi alur kerja GitHub Actions.
+- `DockerHub.txt`: Tautan ke image model di Docker Hub.
 
-## 🚀 CI/CD Pipeline
-
-### GitHub Actions Workflow
-```yaml
-name: ML CI Pipeline
-on: [push]
-jobs:
-  build:
-    - Train model with MLflow
-    - Build Docker image
-    - Push to DockerHub
-```
-
-### Trigger
-- Setiap push ke repository akan trigger workflow
-
-## 🐳 Docker
-
-### Build Manual
-```bash
-cd MLProject
-docker build -t house-price-model .
-```
-
-### Pull dari DockerHub
-```bash
-docker pull anwarrohmadi/house-price-model:latest
-```
-
-## 📦 DockerHub Image
-Link: [DockerHub Repository](https://hub.docker.com/r/anwarrohmadi/house-price-model)
-
-## 👤 Author
-**Anwar Rohmadi**
-
-## 🔗 Links
-- [GitHub Repository](https://github.com/anwarrohmadi2006/Workflow-CI)
-- [DockerHub Image](https://hub.docker.com/r/anwarrohmadi/house-price-model)
+## Otomatisasi
+Setiap push ke branch `master` akan memicu:
+1. Preprocessing Data.
+2. Pelatihan Model.
+3. Build Docker Image.
+4. Push Image ke Docker Hub.
