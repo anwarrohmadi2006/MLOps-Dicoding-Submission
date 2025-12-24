@@ -1,0 +1,73 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: MLOps Alerts
+    folder: alerts
+    interval: 1m
+    rules:
+      - uid: alert-latency-high
+        title: High Latency P95
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: histogram_quantile(0.95, sum(rate(model_request_latency_seconds_bucket[5m])) by (le)) > 0.5
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: OK
+        execErrState: OK
+        for: 1m
+        annotations:
+          summary: Latency P95 melebihi 500ms
+        labels:
+          severity: warning
+
+      - uid: alert-error-rate
+        title: High Error Rate
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: (sum(rate(model_error_total[5m])) / clamp_min(sum(rate(model_request_total[5m])), 0.001)) * 100 > 5
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: OK
+        execErrState: OK
+        for: 1m
+        annotations:
+          summary: Error rate melebihi 5%
+        labels:
+          severity: critical
+
+      - uid: alert-cpu-high
+        title: High CPU Usage
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(container_cpu_usage_seconds_total{id="/"}[5m])) * 100 > 80
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: OK
+        execErrState: OK
+        for: 2m
+        annotations:
+          summary: CPU usage melebihi 80%
+        labels:
+          severity: warning

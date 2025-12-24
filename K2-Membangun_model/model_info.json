@@ -1,0 +1,15 @@
+{
+  "algorithm": "HistGradientBoostingRegressor",
+  "n_features": 80,
+  "metrics": {
+    "rmse": 29370.331542720225,
+    "mae": 16447.614745019826,
+    "r2": 0.8875385020625287
+  },
+  "hyperparameters": {
+    "learning_rate": 0.05,
+    "max_depth": 8,
+    "max_iter": 300,
+    "min_samples_leaf": 15
+  }
+}
