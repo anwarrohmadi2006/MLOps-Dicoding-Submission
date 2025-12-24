@@ -11,6 +11,12 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import mlflow
 import mlflow.sklearn
 
+# Initialize DagsHub MLflow (use env vars for auth)
+import dagshub
+dagshub.init(repo_owner=os.getenv("DAGSHUB_USERNAME", "anwarrohmadi2006"), 
+             repo_name="MLOps-Dicoding-Submission", 
+             mlflow=True)
+
 DATA_DIR = "house_prices_preprocessing"
 MODEL_OUTPUT_DIR = "model_output"
 
@@ -55,15 +61,9 @@ def main():
         os.makedirs(MODEL_OUTPUT_DIR, exist_ok=True)
         model_path = os.path.join(MODEL_OUTPUT_DIR, "model")
         mlflow.sklearn.save_model(model, model_path)
-        mlflow.sklearn.log_model(model, "model", registered_model_name="house_prices_model")
-        
-        run_id = mlflow.active_run().info.run_id
-        with open(os.path.join(MODEL_OUTPUT_DIR, "run_id.txt"), "w") as f:
-            f.write(run_id)
         
         print(f"RMSE: {rmse:.4f}, MAE: {mae:.4f}, R2: {r2:.4f}")
         print(f"Model saved to {model_path}")
-        print(f"Run ID: {run_id}")
 
 if __name__ == "__main__":
     main()
