@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/house-prices-model
+  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/mlops-dicoding-model
 
 jobs:
   # K1 - Preprocessing Pipeline
