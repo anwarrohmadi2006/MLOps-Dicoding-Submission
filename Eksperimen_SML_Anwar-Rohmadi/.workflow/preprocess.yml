@@ -1,17 +1,62 @@
 name: Preprocessing Pipeline
+# K1 - Eksperimen SML | Author: Anwar-Rohmadi
+# Trigger: Push ke main, manual dispatch
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
 jobs:
   preprocess:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install -r requirements.txt
-      - run: cd preprocessing && python automate_Anwar-Rohmadi.py
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Setup Kaggle credentials
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: |
+          mkdir -p ~/.kaggle
+          echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_KEY }}"}' > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
+      
+      - name: Download dataset from Kaggle
+        run: |
+          kaggle competitions download -c house-prices-advanced-regression-techniques -p house_prices_raw
+          cd house_prices_raw && unzip -o *.zip && rm -f *.zip
+      
+      - name: Run preprocessing pipeline
+        run: |
+          cd preprocessing
+          python automate_Anwar-Rohmadi.py
+      
+      - name: Upload preprocessed data as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: preprocessed-dataset
+          path: house_prices_preprocessing/
+          retention-days: 30
+      
+      - name: Commit preprocessed data (auto-update)
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add house_prices_preprocessing/
+          git diff --staged --quiet || git commit -m "Auto-update: Preprocessed data $(date +'%Y-%m-%d %H:%M')"
+          git push || echo "Nothing to push"
