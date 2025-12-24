@@ -29,7 +29,7 @@ jobs:
           pip install pandas numpy scikit-learn
       
       - name: Run preprocessing script
-        working-directory: K1-Eksperimen/preprocessing
+        working-directory: Eksperimen_SML_Anwar-Rohmadi/preprocessing
         run: |
           python automate_Anwar-Rohmadi.py
       
@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: preprocessed-data
-          path: K1-Eksperimen/house_prices_preprocessing/
+          path: Eksperimen_SML_Anwar-Rohmadi/house_prices_preprocessing/
           retention-days: 1
 
   # K3: Training and Docker Build
@@ -59,7 +59,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: preprocessed-data
-          path: K3-Workflow-CI/MLProject/house_prices_preprocessing/
+          path: Workflow-CI/MLProject/house_prices_preprocessing/
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -72,7 +72,7 @@ jobs:
           pip install mlflow==2.19.0 scikit-learn pandas numpy dagshub joblib
       
       - name: Run model training
-        working-directory: K3-Workflow-CI/MLProject
+        working-directory: Workflow-CI/MLProject
         run: |
           python modelling.py --max_iter 300 --max_depth 10 --learning_rate 0.1
       
@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: trained-model
-          path: K3-Workflow-CI/MLProject/model_output/
+          path: Workflow-CI/MLProject/model_output/
           retention-days: 30
       
       - name: Login to Docker Hub
@@ -90,7 +90,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Build Docker image
-        working-directory: K3-Workflow-CI/MLProject
+        working-directory: Workflow-CI/MLProject
         run: |
           mlflow models build-docker -m model_output/model -n ${{ env.DOCKER_IMAGE }} --enable-mlserver
       
